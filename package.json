@@ -1,5 +1,5 @@
 {
-  "name": "hakuna/vite-plugin-qiankun",
+  "name": "hakuna_vite-plugin-qiankun",
   "version": "1.0.0",
   "description": "vite for qiankun (retain type = module)",
   "module": "es/index.js",
