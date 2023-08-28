@@ -1,7 +1,7 @@
 {
-  "name": "vite-plugin-qiankun",
-  "version": "1.0.15",
-  "description": "vite for qiankun",
+  "name": "hakuna/vite-plugin-qiankun",
+  "version": "1.0.q",
+  "description": "vite for qiankun (retain type = module)",
   "module": "es/index.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,8 @@
     "start:react18dev": "cd example/react18 && npm run dev",
     "start:vue3sub": "cd example/vue3sub && npm run dev",
     "start:vue": "cd example/vue && npm run start",
-    "vite:test": "npm run build && cd example/viteapp && npm run dev"
+    "vite:test": "npm run build && cd example/viteapp && npm run dev",
+    "prepublish": "npm run build"
   },
   "keywords": [
     "qiankun",
