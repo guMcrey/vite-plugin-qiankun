@@ -1,5 +1,5 @@
-import cheerio, { CheerioAPI, Element } from 'cheerio'
-import { PluginOption } from 'vite'
+import cheerio, {CheerioAPI, Element} from 'cheerio'
+import {PluginOption} from 'vite'
 
 const createQiankunHelper = (qiankunName: string) => `
   const createDeffer = (hookName) => {
@@ -25,7 +25,11 @@ const createQiankunHelper = (qiankunName: string) => `
 `
 
 // eslint-disable-next-line no-unused-vars
-const replaceSomeScript = ($: CheerioAPI, findStr: string, replaceStr: string = '') => {
+const replaceSomeScript = (
+  $: CheerioAPI,
+  findStr: string,
+  replaceStr: string = ''
+) => {
   $('script').each((i, el) => {
     if ($(el).html()?.includes(findStr)) {
       $(el).html(replaceStr)
@@ -48,7 +52,7 @@ const createImportFinallyResolve = (qiankunName: string) => {
 export type MicroOption = {
   useDevMode?: boolean
 }
-type PluginFn = (qiankunName: string, microOption?: MicroOption) => PluginOption;
+type PluginFn = (qiankunName: string, microOption?: MicroOption) => PluginOption
 
 const htmlPlugin: PluginFn = (qiankunName, microOption = {}) => {
   let isProduction: boolean
@@ -62,22 +66,23 @@ const htmlPlugin: PluginFn = (qiankunName, microOption = {}) => {
     const moduleSrc = script$.attr('src')
     let appendBase = ''
     if (microOption.useDevMode && !isProduction) {
-      appendBase = '(window.proxy ? (window.proxy.__INJECTED_PUBLIC_PATH_BY_QIANKUN__ + \'..\') : \'\') + '
+      appendBase =
+        "(window.proxy ? (window.proxy.__INJECTED_PUBLIC_PATH_BY_QIANKUN__ + '..') : '') + "
     }
     script$.removeAttr('src')
-    script$.removeAttr('type')
+    // script$.removeAttr('type')
     script$.html(`import(${appendBase}'${moduleSrc}')`)
     return script$
   }
 
   return {
     name: 'qiankun-html-transform',
-    configResolved (config) {
+    configResolved(config) {
       isProduction = config.command === 'build' || config.isProduction
       base = config.base
     },
 
-    configureServer (server) {
+    configureServer(server) {
       return () => {
         server.middlewares.use((req, res, next) => {
           if (isProduction || !microOption.useDevMode) {
@@ -89,7 +94,10 @@ const htmlPlugin: PluginFn = (qiankunName, microOption = {}) => {
             let [htmlStr, ...rest] = args
             if (typeof htmlStr === 'string') {
               const $ = cheerio.load(htmlStr)
-              module2DynamicImport($, $(`script[src=${base}@vite/client]`).get(0))
+              module2DynamicImport(
+                $,
+                $(`script[src=${base}@vite/client]`).get(0)
+              )
               htmlStr = $.html()
             }
             end(htmlStr, ...rest)
@@ -98,9 +106,11 @@ const htmlPlugin: PluginFn = (qiankunName, microOption = {}) => {
         })
       }
     },
-    transformIndexHtml (html: string) {
+    transformIndexHtml(html: string) {
       const $ = cheerio.load(html)
-      const moduleTags = $('body script[type=module], head script[crossorigin=""]')
+      const moduleTags = $(
+        'body script[type=module], head script[crossorigin=""]'
+      )
       if (!moduleTags || !moduleTags.length) {
         return
       }
@@ -117,7 +127,7 @@ const htmlPlugin: PluginFn = (qiankunName, microOption = {}) => {
       $('body').append(`<script>${createQiankunHelper(qiankunName)}</script>`)
       const output = $.html()
       return output
-    }
+    },
   }
 }
 
